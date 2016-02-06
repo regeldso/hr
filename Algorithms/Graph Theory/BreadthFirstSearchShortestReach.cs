@@ -1,92 +1,118 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-class Solution {
-    public static void ShortestDistance(int n, int m, int[][] edges, int s)
+using System.Linq;
+
+public class Solution
+{
+    public static string ShortestDistance(int n, int m, int[,] edges, int s)
     {
+        int rank = 1;
+        int pos = s;
+        int[] nodesrank = new int[n];
+        for (int j = 0;  j < n ; j++)
+            nodesrank[j] = -1;
+        string str = string.Empty;
 
-        string lensStr = String.Empty;
-        bool unreachable = true;
-        int ilen = -1;
-        for (int i = 1; i <= n; i++)
+        // Add one edge nodes
+        for (int i = 0; i < m; i++)
         {
-            ilen = -1;
-            if (i != s)
+            if (edges[i, 2] != 1)
             {
-                unreachable = true;
-                for (int y = 0; y < m; y++)
+                if (edges[i, 0] == pos)
                 {
-                    if (edges[y][0] == i | edges[y][1] == i)
-                    {
-                        unreachable = false;
-                    }
+                    nodesrank[edges[i, 1]-1] = rank;
+                    edges[i, 2] = 1;
                 }
-                if (!unreachable)
+                else if (edges[i, 1] == pos)
                 {
-                    ilen = 0;
-                    bool stop = false;
-                    bool first_s = false;
-                    List<int[]> ls = new List<int[]> ();
-                    ls.Add(new int[] { s, 0, -1});
-
-                    while (!stop)   
-                    {
-                        first_s = false;
-                        for (int y = 0; y < m; y++)
+                    nodesrank[edges[i, 0]-1] = rank;
+                    edges[i, 2] = 1;
+                }
+            }
+        }
+        // Add other nodes from edges
+        bool isFind = true;
+        int r = 0;
+        rank = rank + 1;
+        int current = 0;
+        while (isFind)
+        {
+            isFind = false;
+            if (nodesrank[r] != -1)
+            {
+                for (int t = 0; t < m; t++) {
+                    if (edges[t, 2] != 1) {
+                        if (edges[t, 0] == (r + 1))
                         {
-                            if (!first_s) {
-                                if (edges[y][0] == ls[ls.Count-1][0] & y != ls[ls.Count - 1][2])
-                                {
-                                    ls[ls.Count - 1][1] = edges[y][1];
-                                    ls[ls.Count - 1][2] = y;
-                                    first_s = true;
-                                }
-                            }
-                            if (edges[y][0] == ls[ls.Count - 1][0] & edges[y][1] == i)
-                            {
-                                ilen = ilen + 6;
-                                stop = true;
-                            }
+                            current = edges[t, 1] - 1;
+                            if (nodesrank[current] == -1)
+                                nodesrank[current] = rank;
+                            edges[t, 2] = 1;
+                            isFind = true;
                         }
-
-                        if (!stop)
+                        else if (edges[t, 1] == (r + 1))
                         {
-                            if (first_s)
-                            {
-                                ilen = ilen + 6;
-                                ls.Add(new int[] { ls[ls.Count - 1][1], 0, -1 });
-                            }
-                            else
-                            {
-                                ls.RemoveAt(ls.Count - 1);
-                            }
+                            current = edges[t, 0] - 1;
+                            if (nodesrank[current] == -1)
+                                nodesrank[current] = rank;
+                            edges[t, 2] = 1;
+                            isFind = true;
                         }
                     }
                 }
-                lensStr = lensStr + ilen.ToString() + " ";
             }
 
+            if (r < n)
+            {
+                r++;
+            } else
+            {
+                if (isFind)
+                {
+                    r = 0;
+                    rank = rank + 1 ;
+                }
+            }
         }
-        Console.WriteLine(lensStr);
+
+        // Out
+        for (int y = 0; y < n; y++)
+        {
+            if (y != s-1)
+            {
+                if (nodesrank[y] != -1)
+                {
+                    str = str + (nodesrank[y] * 6).ToString() + " ";
+
+                }
+                else
+                {
+                    str = str + nodesrank[y].ToString() + " ";
+                }                
+            }
+        }
+        return str;
     }
-    static void Main(String[] args) {
+    public static void Main(String[] args)
+    {
         int t = Convert.ToInt32(Console.ReadLine());
         for (int j = 0; j < t; j++)
         {
             string[] str = Console.ReadLine().Split(' ');
             int n = Convert.ToInt32(str[0].ToString());
             int m = Convert.ToInt32(str[1].ToString());
-            int[][] edges = new int[m][];
-            for (int i = 0; i < m; i++)
+            int[,] edges = new int[m, 3];
+            for (int k = 0; k < m; k++)
             {
                 string[] str2 = Console.ReadLine().Split(' ');
-                int x = Convert.ToInt32(str2[0].ToString());
-                int y = Convert.ToInt32(str2[1].ToString());
-                edges[i] = new int[] { x, y };
-             }
+                edges[k, 0] = Convert.ToInt32(str2[0].ToString());
+                edges[k, 1] = Convert.ToInt32(str2[1].ToString());
+                edges[k, 2] = 0;
+            }
             string[] str3 = Console.ReadLine().Split(' ');
             int s = Convert.ToInt32(str3[0].ToString());
-            ShortestDistance(n, m, edges, s);
+            Console.WriteLine(ShortestDistance(n, m, edges, s));
         }
     }
 }
