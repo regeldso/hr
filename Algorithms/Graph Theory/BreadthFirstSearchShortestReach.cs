@@ -8,56 +8,51 @@ public class Solution
     public static string ShortestDistance(int n, int m, int[,] edges, int s)
     {
         int rank = 1;
-        int pos = s;
-        int[] nodesrank = new int[n];
-        for (int j = 0;  j < n ; j++)
-            nodesrank[j] = -1;
+        int[] nodesrank = new int[n+1];
         string str = string.Empty;
 
         // Add one edge nodes
         for (int i = 0; i < m; i++)
         {
-            if (edges[i, 2] != 1)
+            if (edges[i, 0] == s)
             {
-                if (edges[i, 0] == pos)
-                {
-                    nodesrank[edges[i, 1]-1] = rank;
-                    edges[i, 2] = 1;
-                }
-                else if (edges[i, 1] == pos)
-                {
-                    nodesrank[edges[i, 0]-1] = rank;
-                    edges[i, 2] = 1;
-                }
+                nodesrank[edges[i, 1]] = rank;
+                edges[i, 2] = 1;
+            }
+            else if (edges[i, 1] == s)
+            { 
+                nodesrank[edges[i, 0]] = rank;
+                edges[i, 2] = 1;
             }
         }
         // Add other nodes from edges
         bool isFind = true;
+        bool isFindEdge = true;
         int r = 0;
         rank = rank + 1;
-        int current = 0;
         while (isFind)
         {
-            isFind = false;
-            if (nodesrank[r] != -1)
+            if (nodesrank[r] != -1 & nodesrank[r] != 0)
             {
                 for (int t = 0; t < m; t++) {
                     if (edges[t, 2] != 1) {
-                        if (edges[t, 0] == (r + 1))
+                        if (edges[t, 0] == r)
                         {
-                            current = edges[t, 1] - 1;
-                            if (nodesrank[current] == -1)
-                                nodesrank[current] = rank;
-                            edges[t, 2] = 1;
-                            isFind = true;
+                            if (nodesrank[edges[t, 1]] == 0)
+                            {
+                                nodesrank[edges[t, 1]] = -1;
+                                edges[t, 2] = 1;
+                                isFindEdge = true;
+                            }
                         }
-                        else if (edges[t, 1] == (r + 1))
+                        else if (edges[t, 1] == r)
                         {
-                            current = edges[t, 0] - 1;
-                            if (nodesrank[current] == -1)
-                                nodesrank[current] = rank;
-                            edges[t, 2] = 1;
-                            isFind = true;
+                            if (nodesrank[edges[t, 0]] == 0)
+                            {
+                                nodesrank[edges[t, 0]] = -1;
+                                edges[t, 2] = 1;
+                                isFindEdge = true;
+                            }
                         }
                     }
                 }
@@ -68,27 +63,36 @@ public class Solution
                 r++;
             } else
             {
-                if (isFind)
+                if (isFindEdge)
                 {
-                    r = 0;
-                    rank = rank + 1 ;
+                    for (int w = 1; w <= n; w++)
+                    {
+                        if (nodesrank[w] == -1)
+                            nodesrank[w] = rank;
+                    }
+                    isFindEdge = false;
+                    r = 1;
+                    rank = rank + 1;
+                }
+                else
+                {
+                    isFind = false;
                 }
             }
         }
 
         // Out
-        for (int y = 0; y < n; y++)
+        for (int y = 1; y <= n; y++)
         {
-            if (y != s-1)
+            if (y != s)
             {
-                if (nodesrank[y] != -1)
+                if (nodesrank[y] != 0)
                 {
                     str = str + (nodesrank[y] * 6).ToString() + " ";
-
                 }
                 else
                 {
-                    str = str + nodesrank[y].ToString() + " ";
+                    str = str  + "-1 ";
                 }                
             }
         }
