@@ -1,0 +1,9 @@
+SELECT Concat(City,' ', Len(City)) 
+FROM Station
+WHERE  Id = (SELECT TOP 1 Id 
+             FROM Station
+             ORDER BY Len(City), City) 
+       OR 
+       Id = (SELECT TOP 1 Id 
+             FROM Station
+             ORDER BY Len(City) DESC, City);
