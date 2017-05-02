@@ -1,0 +1,9 @@
+public class Solution {    
+
+    public static void main(String[] args) {
+        
+        Regex_Test tester = new Regex_Test();
+        tester.checker("^([\\D{1}][^aeiou][^bcDF][^\\s{1}][^AEIOU][^.,])$"); 
+    
+    }
+}
