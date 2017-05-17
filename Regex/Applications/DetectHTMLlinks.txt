@@ -1,0 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
+class Solution {
+    static void Main(String[] args) {
+        int n = Convert.ToInt32(Console.ReadLine());
+        List<string> urlList = new List<string>();
+        for (int i = 1; i <= n; i++)
+        {
+            urlList.Add(Console.ReadLine());
+        }
+        string pattern = "<a.*?href=\"(.*?)\".*?>(.*?)</a>";
+        Regex regex = new Regex(pattern);
+        Regex replaceRegex = new Regex("<.*?>");
+        foreach (string str in urlList)
+        {
+            Match match = regex.Match(str);
+            while (match.Success)
+            {
+                Console.WriteLine(match.Groups[1].Value +","+ replaceRegex.Replace(match.Groups[2].Value, ""));
+                match = match.NextMatch();
+            }         
+        }
+
+    }
+}
