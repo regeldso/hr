@@ -1,0 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+class Solution {
+    static void Main(String[] args) { 
+        int n = Convert.ToInt32(Console.ReadLine());
+        string pattern = "^[_.]\\d+?([a-zA-Z]*?[_]{0,1})$";
+        Regex regex = new Regex(pattern);             
+        for (int i = 1; i <= n; i++)
+        {
+            if (regex.IsMatch(Console.ReadLine()))
+            {
+                Console.WriteLine("VALID");
+            }
+            else
+            {
+                Console.WriteLine("INVALID");
+            }       
+        }
+    }
+}
