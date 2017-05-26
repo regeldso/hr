@@ -1,0 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+class Solution {
+    static void Main(String[] args) { 
+        int n = Convert.ToInt32(Console.ReadLine());
+        string patternV4 = "^([1-2]{0,1}\\d{1,2}[.]){3}([1-2]{0,1}\\d{1,2})$";
+        string patternV6 = "^([0-9a-f]{1,4}[:]){7}([0-9a-f]{1,4})$";
+        Regex regexV4 = new Regex(patternV4);  
+        Regex regexV6 = new Regex(patternV6);     
+        for (int i = 1; i <= n; i++)
+        {
+            string str = Console.ReadLine();
+            if (regexV6.IsMatch(str))
+            {
+                Console.WriteLine("IPv6");
+            }
+            else if (regexV4.IsMatch(str))
+            {
+                Console.WriteLine("IPv4");
+            }   
+            else
+            {
+                Console.WriteLine("Neither");
+            }
+        }
+    }
+}
